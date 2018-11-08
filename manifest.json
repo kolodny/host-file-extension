@@ -1,0 +1,15 @@
+{
+	"name": "Hosts File",
+	"version": "0.0.0.0",
+	"manifest_version": 2,
+	"description": "Set a hosts file for Google Chrome.",
+	"browser_action": {
+		"default_icon_": "icon.png",
+		"default_title": "Edit hosts file",
+		"default_popup": "popup.html"
+	},
+	"permissions": ["webRequest", "webRequestBlocking", "<all_urls>", "tabs"],
+	"background": {
+		"scripts": ["background.js"]
+	}
+}

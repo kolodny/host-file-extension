@@ -1,0 +1,22 @@
+body {
+  width: 650px;
+  height: 550px;
+}
+body, #hosts {
+  padding: 0;
+  margin: 0;
+}
+#hosts {
+  overflow: auto;
+  box-shadow: none;
+  border: 0;
+  outline: 0;
+  resize: none;
+ 
+  margin: 0;
+  padding: 10px;
+  resize: none;
+  font-family: monospace;
+  width: 100%;
+  height: 100%;
+}
