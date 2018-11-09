@@ -8,7 +8,7 @@
 		"default_title": "Edit hosts file",
 		"default_popup": "popup.html"
 	},
-	"permissions": ["webRequest", "webRequestBlocking", "<all_urls>", "tabs"],
+	"permissions": ["proxy"],
 	"background": {
 		"scripts": ["background.js"]
 	}

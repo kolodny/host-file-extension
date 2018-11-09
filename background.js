@@ -1,8 +1,8 @@
-let hostsMap = {};
+let hostsMap;
 
-window.buildHostMap = () => {
+function buildHostMap(hosts) {
   hostsMap = {};
-  const lines = (localStorage.hosts || '')
+  const lines = hosts
     .split('\n')
     .map(l => l.replace(/#.*$/, '').trim())
     .filter(l => l)
@@ -16,22 +16,36 @@ window.buildHostMap = () => {
       }
     }
   }
+  setPacScript();
 }
 
-window.buildHostMap();
+function setPacScript() {
+  chrome.proxy.settings.set({
+    value: {
+      mode: 'pac_script',
+      pacScript: {
+        data: function() {
+          const parser = /^((?<protocol>\w+):)?(\/\/((\w+)?(:(\w+))?@)?([^\/\?:]+)(:(?<port>\d+))?)/;
+          const hostsMap = '@@'
+          function FindProxyForURL(url, host) {
+            if (hostsMap[host]) {
+              let {protocol, port} = parser.exec(url).groups;
+              if (!port) {
+                port = protocol === 'https' ? 443 : 80;
+              }
+              return `PROXY ${hostsMap[host]}:${port}`;
+            }
+            return 'DIRECT';
+          }
+        }.toString().split('\n').slice(1, -1).join('\n').replace("'@@'", JSON.stringify(hostsMap)),
+      },
+    },
+  });
+}
 
-chrome.webRequest.onBeforeRequest.addListener(details => {
-    const url = new URL(details.url);
-    const redirect = hostsMap[url.hostname];
-    if (redirect) {
-      url.hostname = redirect;
-      return {
-        redirectUrl : url.toString(),
-      };
-    }
-  },
-  {
-    urls : ["<all_urls>"]
-  },
-  ["blocking"]
-);
+window.setHosts = hosts => {
+  localStorage.hosts = hosts;
+  buildHostMap(hosts);
+}
+
+window.buildHostMap(localStorage.hosts || '');
